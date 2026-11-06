@@ -1,0 +1,17 @@
+/* The game switcher bar. Each game's own styles live in its folder. */
+
+.game-switcher {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.game-switcher button.selected {
+  background: var(--felt);
+  border-color: var(--felt);
+  color: var(--felt-text);
+  font-weight: 600;
+}

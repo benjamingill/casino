@@ -1,0 +1,97 @@
+/* Colour tokens and base styles shared by every casino game. */
+:root {
+  --bg: #f4f2ee;
+  --surface: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6b6b70;
+  --border: #dcd9d2;
+  --felt: #1f6b45;
+  --felt-dark: #17523a;
+  --felt-text: #f1f6f2;
+  --gold: #e8c766;
+  --good: #1e8a4c;
+  --good-bg: #e3f4e9;
+  --bad: #c0392b;
+  --bad-bg: #fbe6e3;
+  --info-bg: #e7eef9;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --surface: #222326;
+    --text: #ececee;
+    --muted: #a0a0a6;
+    --border: #3a3b40;
+    --good-bg: #183826;
+    --bad-bg: #44201c;
+    --info-bg: #1e2a3d;
+    --good: #5fd08f;
+    --bad: #ff8a7a;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.4;
+}
+
+/* ---- Base controls ---- */
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 14px;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button.link {
+  border: none;
+  background: none;
+  padding: 0;
+  text-decoration: underline;
+  color: var(--muted);
+}
+
+button.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #2a2100;
+  font-weight: 600;
+}
+
+button.secondary {
+  background: transparent;
+}
+
+kbd {
+  font-family: ui-monospace, monospace;
+  font-size: 0.75em;
+  padding: 1px 5px;
+  margin-left: 4px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  opacity: 0.6;
+}

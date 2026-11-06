@@ -1,0 +1,446 @@
+/* Strategy-chart action colours (shared tokens and base styles live in src/shared/theme.css). */
+:root {
+  --hit: #f3d7d4;
+  --stand: #f7ecbf;
+  --double: #cfe8d3;
+  --split: #cfe0f5;
+  --surrender: #e2dbef;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hit: #5a2f2c;
+    --stand: #574c22;
+    --double: #2a4a31;
+    --split: #273d5c;
+    --surrender: #3e3554;
+  }
+}
+
+.blackjack {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.blackjack > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.header-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: baseline;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.header-info strong {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+/* ---- Table ---- */
+
+.table {
+  background: radial-gradient(ellipse at top, var(--felt), var(--felt-dark));
+  color: var(--felt-text);
+  border-radius: 20px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 460px;
+}
+
+.dealer-area,
+.player-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  min-height: 150px;
+}
+
+.placeholder {
+  align-self: center;
+  opacity: 0.8;
+}
+
+.rules-strip {
+  text-align: center;
+  color: var(--gold);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+}
+
+.hand.active {
+  border-color: var(--gold);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.hand-label {
+  font-size: 0.9rem;
+}
+
+.hand-label .total {
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.hand-footer {
+  display: flex;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.outcome {
+  font-weight: 700;
+}
+.outcome.good {
+  color: #9ff0bd;
+}
+.outcome.bad {
+  color: #ffb3a8;
+}
+
+.cards {
+  display: flex;
+}
+
+.card {
+  position: relative;
+  width: 64px;
+  height: 92px;
+  background: #fff;
+  color: #1d1d1f;
+  border-radius: 7px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  animation: deal 0.18s ease-out;
+}
+
+.card + .card {
+  margin-left: -22px;
+}
+
+.card.red {
+  color: #c62828;
+}
+
+.card.back {
+  background: repeating-linear-gradient(45deg, #8b1e2d, #8b1e2d 6px, #a52a3a 6px, #a52a3a 12px);
+  border: 4px solid #fff;
+}
+
+.card .corner {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.card .pip {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+}
+
+@keyframes deal {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  min-height: 40px;
+}
+
+.banner {
+  padding: 8px 14px;
+  border-radius: 8px;
+  max-width: 100%;
+  text-align: center;
+  color: var(--text);
+}
+.banner.good {
+  background: var(--good-bg);
+}
+.banner.bad {
+  background: var(--bad-bg);
+}
+.banner.info {
+  background: var(--info-bg);
+}
+
+.round-summary {
+  text-align: center;
+}
+.round-summary .good {
+  color: #9ff0bd;
+}
+.round-summary .bad {
+  color: #ffb3a8;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+}
+
+.actions,
+.betting,
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.betting {
+  flex-direction: column;
+}
+
+.chip {
+  border-radius: 999px;
+  min-width: 52px;
+  border: 2px dashed #ccc;
+}
+
+.chip.selected {
+  border-color: var(--gold);
+  border-style: solid;
+  font-weight: 700;
+}
+
+.bet-input input {
+  width: 72px;
+  margin-left: 4px;
+  font: inherit;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.check {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ---- Panels ---- */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.tabs button {
+  border-radius: 8px 8px 0 0;
+  border-bottom: none;
+  background: transparent;
+}
+
+.tabs button.selected {
+  background: var(--surface);
+  font-weight: 600;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 12px 12px 12px;
+  padding: 16px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.tile-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tile-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.blackjack table {
+  border-collapse: collapse;
+}
+
+.category-table td,
+.category-table th {
+  padding: 4px 16px 4px 0;
+  text-align: left;
+}
+
+.mistakes {
+  padding-left: 20px;
+}
+
+.chart-tables {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.chart caption {
+  font-weight: 700;
+  text-align: left;
+  padding-bottom: 4px;
+}
+
+.chart th {
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.chart thead th {
+  text-align: center;
+}
+
+.chart th.axis {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.chart th.axis-x {
+  border-bottom: 1px solid var(--border);
+}
+
+.chart th.axis-y {
+  text-align: right;
+}
+
+.cell {
+  display: inline-block;
+  min-width: 26px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 3px;
+  border: 1px solid var(--bg);
+}
+
+td.cell {
+  display: table-cell;
+}
+
+.cell.hit {
+  background: var(--hit);
+}
+.cell.stand {
+  background: var(--stand);
+}
+.cell.double {
+  background: var(--double);
+}
+.cell.split {
+  background: var(--split);
+}
+.cell.surrender {
+  background: var(--surrender);
+}
+.cell.lit {
+  outline: 3px solid var(--gold);
+  outline-offset: -2px;
+}
+
+.legend {
+  font-size: 0.85rem;
+  line-height: 2;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rules-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.rules-grid select {
+  font: inherit;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.rules-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 520px) {
+  .card {
+    width: 52px;
+    height: 76px;
+  }
+  .card .pip {
+    font-size: 1.5rem;
+  }
+}
