@@ -1,0 +1,1308 @@
+/* Go Greg slot machine. Shared tokens and base styles live in src/shared/theme.css. */
+:root {
+  --cabinet: #2b2b2b;
+  --cabinet-dark: #1a1512;
+  --cabinet-text: #fff4ea;
+  --reel-bg: #f7f2e8;
+  --reel-text: #2b2b2b;
+  --win-glow: #ffd84d;
+  --gem-green: #2fbf71;
+  --gem-red: #e0453a;
+  --gem-blue: #3a7be0;
+  --tier-mini: #6fb7ff;
+  --tier-minor: #6ee08f;
+  --tier-maxi: #ffb347;
+  --tier-major: #ff6b8b;
+  --tier-grand: #ffd84d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --reel-bg: #ece3d3;
+  }
+}
+
+/*
+ * The machine fills the screen's height. Everything else takes its natural
+ * height and the reels grow to fill what's left, so on a tall phone screen the
+ * reels get taller instead of leaving empty space.
+ *
+ * The bonus board still sizes itself from `--fit-height`: `--chrome` is roughly
+ * the height of everything around it.
+ */
+.slots {
+  --chrome: 540px;
+  --fit-height: max(150px, calc(100dvh - var(--chrome)));
+  max-width: 600px;
+  height: 100dvh;
+  margin: 0 auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.slots-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Cabinet ---- */
+
+/* Charcoal at the top warming to glowing embers at the bottom. */
+.cabinet {
+  background:
+    radial-gradient(ellipse 90% 30% at 50% 104%, #ff8a1c 0 30%, #c2410c 55%, transparent 75%),
+    linear-gradient(#2b2b2b, #1c1714 55%, #3a1a0c);
+  color: var(--cabinet-text);
+  border: 1px solid #c2410c;
+  border-radius: 12px;
+  padding: 8px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- Top of the cabinet: jackpots, gem grills ---- */
+
+.cabinet-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* All five jackpots on one line; plaques shrink to fit narrow screens. */
+.plaques {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 1vw, 8px);
+  width: 100%;
+}
+
+.plaque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(#2a1a10, #120a05);
+  border: 3px solid #d4a017;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 2px #6b4a0a,
+    0 2px 6px rgba(0, 0, 0, 0.5);
+  padding: 2px clamp(4px, 1.4vw, 10px) 4px;
+  line-height: 1.1;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.plaque-name {
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  font-size: clamp(0.6rem, 2.2vw, 0.75rem);
+}
+
+.plaque-amount {
+  color: #fff;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(0.85rem, 3.4vw, 1.15rem);
+}
+
+.plaque-big {
+  border-color: #3ccf6e;
+  background: linear-gradient(#0f3a1f, #06200f);
+  box-shadow:
+    inset 0 0 0 2px #d4a017,
+    0 0 14px rgba(255, 216, 77, 0.5);
+  padding: 2px clamp(6px, 2vw, 18px) 6px;
+}
+
+.plaque-big .plaque-name {
+  font-size: clamp(0.7rem, 2.6vw, 0.95rem);
+}
+
+.plaque-big .plaque-amount {
+  font-size: clamp(0.95rem, 4.2vw, 1.7rem);
+}
+
+.plaque-mid .plaque-amount {
+  font-size: clamp(0.7rem, 2.8vw, 1.1rem);
+}
+
+.plaque-small .plaque-amount {
+  font-size: clamp(0.65rem, 2.5vw, 0.95rem);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition:
+    opacity 0.3s,
+    transform 0.3s,
+    filter 0.3s;
+}
+
+/* Bigger grills leave less height for the reels, which take whatever is left. */
+.feature-grill {
+  width: min(100%, 190px, 19dvh);
+  height: auto;
+}
+
+.smoke {
+  animation: smoke 2.4s ease-in infinite;
+}
+.s2 {
+  animation-delay: 0.8s;
+}
+.s3 {
+  animation-delay: 1.6s;
+}
+
+@keyframes smoke {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  to {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+}
+
+.feature-label {
+  margin-top: -6px;
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(0.8rem, 3.6vw, 1.15rem);
+  color: #fff;
+  padding: 1px 10px;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.feature-green .feature-label {
+  background: linear-gradient(#4fe08a, #1a8a48);
+}
+.feature-red .feature-label {
+  background: linear-gradient(#ff6a5c, #a8231a);
+}
+.feature-blue .feature-label {
+  background: linear-gradient(#6aa4ff, #1d4aa8);
+}
+
+.feature-green .feature-grill {
+  filter: drop-shadow(0 0 8px rgba(80, 230, 140, 0.5));
+}
+.feature-red .feature-grill {
+  filter: drop-shadow(0 0 8px rgba(255, 100, 80, 0.5));
+}
+.feature-blue .feature-grill {
+  filter: drop-shadow(0 0 8px rgba(100, 160, 255, 0.5));
+}
+
+.feature.on {
+  transform: scale(1.08);
+  animation: pulse 0.6s ease-in-out infinite alternate;
+}
+
+.feature.off {
+  opacity: 0.3;
+  filter: grayscale(0.8);
+}
+
+.trigger-strip {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+  width: 100%;
+  max-width: 560px;
+  border: 2px solid #d4a017;
+  border-radius: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(0.6rem, 2.6vw, 0.85rem);
+  /* Room for the coin heaps that sit on top of the end badges. */
+  margin-top: 32px;
+}
+
+.strip-end {
+  position: relative;
+  background: linear-gradient(#a8231a, #5e0f0a);
+  color: #ffe9a8;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 1px 0 #3a0500;
+}
+
+.strip-end:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.strip-end:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.coin-pile {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 4px);
+  transform: translateX(-50%);
+  width: 110%;
+  min-width: 60px;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(255, 216, 77, 0.6));
+}
+
+.strip-middle {
+  background: linear-gradient(#3a3a3a, #1c1c1c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 2px 6px;
+}
+
+.strip-middle {
+  animation: strip-in 0.35s ease-out;
+}
+
+@keyframes strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* More specific than .gem (sized for reel squares), so the banner gem stays small. */
+.strip-middle .strip-gem {
+  width: 1.5em;
+  height: 1.5em;
+  flex: 0 0 auto;
+}
+
+.strip-award {
+  font-style: italic;
+  color: #fff;
+  padding: 0 6px;
+  border-radius: 4px;
+  border: 1.5px solid #fff;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.strip-award.feature-green {
+  background: linear-gradient(#4fe08a, #1a8a48);
+}
+.strip-award.feature-red {
+  background: linear-gradient(#ff6a5c, #a8231a);
+}
+.strip-award.feature-blue {
+  background: linear-gradient(#6aa4ff, #1d4aa8);
+}
+
+.strip-greg {
+  width: 1.8em;
+  height: 1.8em;
+  display: inline-block;
+}
+
+.reels-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(#e2b23a, #9a6a0a);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  /* Takes all the height the rest of the machine leaves. */
+  flex: 1;
+  min-height: 150px;
+}
+
+/* ---- Reels ---- */
+
+.reels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 4px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  background: #1a0608;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.reel {
+  background: linear-gradient(90deg, #3a0d12, #5a1820 50%, #3a0d12);
+  color: var(--reel-text);
+  border-radius: 6px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  position: relative;
+}
+
+.reel-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6%;
+  font-size: clamp(1.6rem, 8vw, 3rem);
+  line-height: 1;
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.reel-cell.landed {
+  animation: land 0.18s ease-out;
+}
+
+.reels .reel-cell.win {
+  background: var(--win-glow);
+  box-shadow: inset 0 0 0 3px #c79a00;
+  animation: pulse 0.6s ease-in-out infinite alternate;
+}
+
+/*
+ * A spinning reel: 10 symbols, repeated once, each a third of the reel's
+ * height. Sliding down by 10 symbols (10/3 of the strip's own height) loops
+ * seamlessly, so the symbols move top to bottom like a real reel.
+ */
+.reel-strip {
+  display: flex;
+  flex-direction: column;
+  grid-row: 1 / -1;
+  height: 100%;
+  animation: spin-strip 0.35s linear infinite;
+  filter: blur(2px);
+}
+
+.reel-strip span {
+  flex: 0 0 calc(100% / 3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.6rem, 8vw, 3rem);
+}
+
+@keyframes spin-strip {
+  from {
+    transform: translateY(-333.333%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes land {
+  from {
+    transform: translateY(-12%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.94);
+  }
+}
+
+/* Card letters: bold, coloured, outlined in gold. */
+.letter {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  font-size: 1.15em;
+  -webkit-text-stroke: 1.5px #f5d27a;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.5);
+}
+.letter-A {
+  color: #8a3fe0;
+}
+.letter-K {
+  color: #f07a1a;
+}
+.letter-Q {
+  color: #e8b818;
+}
+.letter-J {
+  color: #2f6fe0;
+}
+
+.emoji {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wild and Free Games symbols: just the words, stacked. */
+.word-symbol {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 0.3em;
+  line-height: 1.05;
+  text-shadow: 0 2px 0 #5a0a00;
+}
+
+.word-symbol.inline {
+  font-size: 0.55em;
+  vertical-align: middle;
+}
+
+.greg-art {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Gems: a cut-stone shape with the prize on top. */
+.gem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(1.3em, 92%);
+  aspect-ratio: 1;
+  clip-path: polygon(50% 0, 100% 35%, 80% 100%, 20% 100%, 0 35%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.gem-green {
+  background: linear-gradient(160deg, #8ff0b8, var(--gem-green));
+}
+.gem-red {
+  background: linear-gradient(160deg, #ff9a8f, var(--gem-red));
+}
+.gem-blue {
+  background: linear-gradient(160deg, #9cc3ff, var(--gem-blue));
+}
+
+.gem-prize {
+  font-size: clamp(0.55rem, 2.6vw, 0.9rem);
+  font-weight: 800;
+}
+
+.mini-gem {
+  width: 1em;
+  vertical-align: -0.1em;
+}
+
+/* ---- Control panel: message bar, meters, buttons ---- */
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* One red bar: Menu | Credit | Win | Bet | Denom. (Not .meter-bar: that's the Greg Bonus diamond meter.) */
+.panel-bar {
+  /* Height of the black displays, and of the yellow buttons beside them. */
+  --meter-h: clamp(24px, 5vw, 32px);
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr auto;
+  align-items: end;
+  gap: clamp(4px, 1.2vw, 10px);
+  padding: 6px clamp(6px, 1.5vw, 12px) 8px;
+  border-radius: 10px;
+  background: linear-gradient(#d8341c, #a51a0c 55%, #7a0e06);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.yellow-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  min-height: clamp(44px, 10vw, 58px);
+  color: #3a2200;
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(#fff07a, #f5c516 55%, #d99a00);
+  border: 2px solid #8a5a00;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.6),
+    0 2px 0 #5a3a00;
+  line-height: 1.05;
+}
+
+.yellow-btn:disabled {
+  opacity: 0.55;
+}
+
+/* The buttons are exactly as tall as the black displays, lined up along the bottom. */
+.panel-bar .yellow-btn {
+  height: var(--meter-h);
+  min-height: 0;
+  padding: 0 clamp(8px, 2vw, 14px);
+}
+
+.menu-btn {
+  font-size: clamp(0.65rem, 2.4vw, 0.85rem);
+}
+
+.denom-value {
+  font-size: clamp(0.9rem, 3.6vw, 1.25rem);
+}
+
+.denom-sub {
+  font-size: clamp(0.45rem, 1.6vw, 0.55rem);
+  white-space: nowrap;
+}
+
+.feature-intro {
+  color: var(--win-glow);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+  display: inline-block;
+}
+
+/* Each meter: a white label above a black display with big white numbers. */
+.meter-box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  line-height: 1.1;
+}
+
+.meter-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: var(--meter-h);
+  padding: 0 6px;
+  background: linear-gradient(#1a1a1a, #050505);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  /* Lets the number size itself to the display's width (see .meter-value). */
+  container-type: inline-size;
+}
+
+.meter-label {
+  text-align: center;
+  font-size: clamp(0.6rem, 2.2vw, 0.8rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin-bottom: 2px;
+  color: #fff;
+  text-shadow: 0 1px 0 #4a0500;
+}
+
+.meter-status {
+  text-align: center;
+  min-height: 1.2em;
+  font-size: clamp(0.55rem, 2vw, 0.72rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #ffe680;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meter-value {
+  display: block;
+  min-height: 1em;
+  max-width: 100%;
+  /* Shrinks with the display's width so long amounts like $1,043.30 always fit. */
+  font-size: min(1.35rem, 14cqi);
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.meter-box.big .meter-display {
+  color: var(--win-glow);
+  box-shadow:
+    0 0 0 2px var(--win-glow),
+    0 0 14px var(--win-glow);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+/* Bet buttons, with Spin on the right. */
+.button-deck {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(4px, 1.2vw, 8px);
+}
+
+.bet-btn {
+  width: clamp(44px, 12vw, 76px);
+  min-height: 0;
+  padding: 3px 2px;
+}
+
+.bet-btn-label {
+  font-size: clamp(0.5rem, 2vw, 0.7rem);
+}
+
+.bet-btn-credits {
+  font-size: clamp(0.8rem, 3.6vw, 1.25rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.bet-btn.selected {
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 14px #fff;
+}
+
+/* The reels (or bonus board / jackpot game) take the height the rest leaves. */
+.play-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1.5vw, 10px);
+  flex: 1;
+  min-height: 0;
+}
+
+.play-center {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.spin-big {
+  width: clamp(90px, 24vw, 150px);
+  min-height: clamp(44px, 10vw, 58px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  color: #fff;
+  background: linear-gradient(#5fd35a, #2a9a2a 60%, #1f7a1f);
+  border: 3px solid #b8f5a0;
+  border-radius: 10px;
+  box-shadow:
+    0 3px 0 #145214,
+    0 0 12px rgba(120, 255, 120, 0.35);
+  text-shadow: 0 2px 0 #145214;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.spin-big:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #145214;
+}
+
+.spin-label {
+  font-size: clamp(0.75rem, 3.4vw, 1.3rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.spin-sub {
+  font-size: clamp(0.5rem, 2vw, 0.7rem);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* ---- Denomination pop-up ---- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.denom-modal {
+  position: fixed;
+  z-index: 21;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100vw - 32px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+  color: #fff;
+  background: linear-gradient(#a51a0c, #5a0a04);
+  border: 3px solid #f5c516;
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* All six denominations on one line, as square buttons. */
+.denom-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(4px, 1.5vw, 10px);
+  width: 100%;
+}
+
+.denom-choice {
+  aspect-ratio: 1;
+  min-height: 0;
+  padding: 0;
+}
+
+.denom-choice .denom-value {
+  font-size: clamp(0.9rem, 4vw, 1.5rem);
+}
+
+.denom-choice.selected {
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 14px #fff;
+}
+
+.slots .muted {
+  color: var(--muted);
+}
+
+.slots .cabinet .muted {
+  color: rgba(243, 236, 255, 0.7);
+}
+
+.cabinet button.link {
+  color: var(--win-glow);
+}
+
+/* ---- Greg Bonus ---- */
+
+.bonus {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bonus-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bonus-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.extra {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0.4;
+}
+
+.extra.on {
+  opacity: 1;
+  font-weight: 700;
+  color: #fff;
+}
+.extra-moScott.on {
+  background: var(--gem-green);
+}
+.extra-goGreg.on {
+  background: var(--gem-red);
+}
+.extra-moMike.on {
+  background: var(--gem-blue);
+}
+
+.bonus-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.bonus-stats strong {
+  color: var(--win-glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.bonus-board {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  gap: 4px;
+  width: 100%;
+  /* The board is cols × 5 squares; the bonus header and footer need a little more room than the reels' win line. */
+  max-width: min(600px, calc((var(--fit-height) - 60px) * var(--cols, 5) / 5));
+  margin: 0 auto;
+  position: relative;
+}
+
+.bonus-cell {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(0.5rem, 2.2vw, 0.8rem);
+  line-height: 1.1;
+  text-align: center;
+  z-index: 1;
+  animation: land 0.2s ease-out;
+}
+
+.bonus-icon {
+  font-size: 1.8em;
+}
+
+.bonus-prize {
+  font-weight: 700;
+}
+
+.bonus-cell.missed {
+  opacity: 0.35;
+}
+
+.bonus-cell.collected {
+  background: rgba(255, 216, 77, 0.25);
+}
+
+.bonus-cell.diamond.collected {
+  background: rgba(150, 210, 255, 0.3);
+}
+
+.bonus-tag {
+  font-size: 0.85em;
+  color: var(--tier-minor);
+  font-weight: 700;
+}
+
+.bonus-tag.boost {
+  color: var(--win-glow);
+}
+
+.greg-area {
+  border: 3px solid var(--win-glow);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 16px rgba(255, 216, 77, 0.5);
+  position: relative;
+  pointer-events: none;
+  z-index: 0;
+  transition: all 0.3s ease;
+}
+
+.greg-area.grew {
+  animation: pulse 0.4s ease-in-out 3 alternate;
+}
+
+.greg-face {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  z-index: 2;
+  background: var(--cabinet);
+  border-radius: 50%;
+  border: 2px solid var(--win-glow);
+  overflow: hidden;
+}
+
+.bonus-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  min-height: 3.5em;
+}
+
+.meter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.meter-bar {
+  width: 220px;
+  max-width: 80vw;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.meter-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #9cc3ff, #e6f2ff);
+  transition: width 0.3s ease;
+}
+
+.bonus-total {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.bonus-total strong {
+  color: var(--win-glow);
+  font-size: 1.3rem;
+}
+
+/* ---- Jackpot pick game ---- */
+
+.pick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pick-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.pick-tiers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tier {
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  font-weight: 700;
+}
+
+.tier-count {
+  margin-left: 4px;
+  letter-spacing: 1px;
+}
+
+.tier.won {
+  background: currentColor;
+}
+
+.tier.won,
+.tier.won .tier-count {
+  color: var(--cabinet-dark);
+}
+
+.tier-mini {
+  color: var(--tier-mini);
+}
+.tier-minor {
+  color: var(--tier-minor);
+}
+.tier-maxi {
+  color: var(--tier-maxi);
+}
+.tier-major {
+  color: var(--tier-major);
+}
+.tier-grand {
+  color: var(--tier-grand);
+}
+
+.pick-coins {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.pick-coin {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: clamp(0.8rem, 4vw, 1.1rem);
+  font-weight: 800;
+  background: radial-gradient(circle at 35% 30%, #fff3b0, #d4a017);
+  border: 3px solid #8a6500;
+  color: #3a2a00;
+  padding: 0;
+}
+
+.pick-coin:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.pick-coin.revealed {
+  background: var(--cabinet-dark);
+  border-color: currentColor;
+}
+
+.pick-coin.won {
+  background: currentColor;
+  color: var(--cabinet-dark);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+/* ---- Help screen (MENU): pages flipped with arrows, like a machine's help ---- */
+
+.menu-modal {
+  position: fixed;
+  z-index: 21;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(600px, calc(100vw - 24px));
+  height: min(560px, calc(100dvh - 24px));
+  display: flex;
+  color: var(--cabinet-text);
+  background: linear-gradient(#2b2b2b, #1c1714 60%, #3a1a0c);
+  border: 4px solid #c2410c;
+  outline: 3px solid var(--gold);
+  outline-offset: -9px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+.help-screen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 18px 18px 14px;
+  gap: 10px;
+}
+
+.help-title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--win-glow);
+  text-shadow: 0 2px 0 #7a4a00;
+}
+
+.help-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.help-body p {
+  margin: 0;
+}
+
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-note {
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+.pay-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.pay-table th,
+.pay-table td {
+  padding: 3px 8px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pay-table thead th {
+  color: var(--win-glow);
+  font-weight: 900;
+}
+
+.pay-table tbody th {
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pay-table td {
+  font-weight: 800;
+}
+
+.pay-sym {
+  display: inline-block;
+  min-width: 1.4em;
+  font-size: 1.3rem;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pay-name {
+  margin-left: 6px;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.grow-table {
+  width: auto;
+  align-self: center;
+}
+
+.help-gems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.help-jackpots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.help-rules {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.help-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.help-arrow {
+  min-height: 0;
+  width: 48px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.1rem;
+}
+
+.help-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.help-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.help-dots span.on {
+  background: var(--win-glow);
+}
+
+.help-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.help-actions .link {
+  color: rgba(243, 236, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.help-return {
+  min-height: 0;
+  padding: 8px 22px;
+  margin-left: auto;
+}
+
+.inline-greg {
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-strip,
+  .reel-cell.win,
+  .feature-intro,
+  .pick-coin.won,
+  .greg-area.grew {
+    animation: none;
+  }
+}
